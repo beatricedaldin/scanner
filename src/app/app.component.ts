@@ -1,97 +1,67 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { ScannerQRCodeConfig, NgxScannerQrcodeService, ScannerQRCodeSelectedFiles, ScannerQRCodeResult, NgxScannerQrcodeComponent } from 'ngx-scanner-qrcode';
+import {
+  Component,
+  OnDestroy,
+  OnInit
+} from "@angular/core";
+import Quagga from 'quagga';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, OnDestroy {
+  scannedCodes: string[] = []
+  constructor() {}
 
-  // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia#front_and_back_camera
-  public config: ScannerQRCodeConfig = {
-    constraints: {
-      video: {
-        width: window.innerWidth
+  ngOnInit(): void {
+    this.startScanner();
+  }
+
+  ngOnDestroy(): void {
+    this.stopScanner();
+  }
+
+  startScanner() {
+    Quagga.init(
+      {
+        inputStream: {
+          type: "LiveStream",
+          constraints: {
+            width: 640,
+            height: 480,
+            facingMode: "environment", // Utilizza la fotocamera posteriore
+          },
+        },
+        decoder: {
+          readers: [
+            "code_128_reader",
+            "ean_reader",
+            "ean_8_reader",
+            "code_39_reader",
+            "upc_reader",
+            "upc_e_reader",
+            "code_93_reader",
+          ],
+        },
       },
-    },
-    // canvasStyles: [
-    //   {
-    //     lineWidth: 1,
-    //     fillStyle: '#00950685',
-    //     strokeStyle: '#00950685',
-    //   },
-    //   {
-    //     font: '17px serif',
-    //     fillStyle: '#ff0000',
-    //     strokeStyle: '#ff0000',
-    //   }
-    // ],
-  };
+      (err) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        Quagga.start();
+      }
+    );
 
-  public qrCodeResult: ScannerQRCodeSelectedFiles[] = [];
-  public qrCodeResult2: ScannerQRCodeSelectedFiles[] = [];
-  public percentage = 80;
-  public quality = 100;
-
-  @ViewChild('action') action!: NgxScannerQrcodeComponent;
-
-  constructor(private qrcode: NgxScannerQrcodeService) { }
-
-  ngAfterViewInit(): void {
-    this.action.isReady.subscribe((res: any) => {
-      // this.handle(this.action, 'start');
+    Quagga.onDetected((data) => {
+      console.log("Codice a barre rilevato:", data.codeResult.code);
+      // Puoi gestire il risultato qui
+      this.scannedCodes.push(data.codeResult.code)
     });
   }
 
-  public onEvent(e: ScannerQRCodeResult[], action?: any): void {
-    // e && action && action.pause();
-    console.log(e);
+  stopScanner() {
+    Quagga.stop();
   }
-
-  public handle(action: any, fn: string): void {
-    // Fix issue #27, #29
-    const playDeviceFacingBack = (devices: any[]) => {
-      // front camera or back camera check here!
-      const device = devices.find(f => (/back|rear|environment/gi.test(f.label))); // Default Back Facing Camera
-      action.playDevice(device ? device.deviceId : devices[0].deviceId);
-    }
-
-    if (fn === 'start') {
-      action[fn](playDeviceFacingBack).subscribe((r: any) => console.log(fn, r), alert);
-    } else {
-      action[fn]().subscribe((r: any) => console.log(fn, r), alert);
-    }
-  }
-
-  public onDowload(action: NgxScannerQrcodeComponent) {
-    action.download().subscribe(console.log, alert);
-  }
-
-  public onSelects(files: any) {
-    this.qrcode.loadFiles(files, this.percentage, this.quality).subscribe((res: ScannerQRCodeSelectedFiles[]) => {
-      this.qrCodeResult = res;
-    });
-  }
-
-  public onSelects2(files: any) {
-    this.qrcode.loadFilesToScan(files, this.config, this.percentage, this.quality).subscribe((res: ScannerQRCodeSelectedFiles[]) => {
-      console.log(res);
-      this.qrCodeResult2 = res;
-    });
-  }
-
-  public onGetConstraints() {
-    const constrains = this.action.getConstraints();
-    console.log(constrains);
-  }
-  
-  public applyConstraints() {
-    const constrains = this.action.applyConstraints({
-      ...this.action.getConstraints(),
-      width: 510
-    });
-    console.log(constrains);
-  }
-
 }
