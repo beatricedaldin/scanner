@@ -1,6 +1,5 @@
 <div id="interactive" class="viewport"></div>
-
 <div *ngIf="scannedCodes && scannedCodes.length > 0">
-  <p>Codici scannerizzati:</p>
+  <p>CODICI SCANNERIZZATI:</p>
   <p *ngFor="let code of scannedCodes">{{ code }}</p>
 </div>

@@ -1,9 +1,5 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit
-} from "@angular/core";
-import Quagga from 'quagga';
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import Quagga from "quagga";
 
 @Component({
   selector: "app-root",
@@ -11,7 +7,7 @@ import Quagga from 'quagga';
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  scannedCodes: string[] = []
+  scannedCodes: string[] = [];
   constructor() {}
 
   ngOnInit(): void {
@@ -57,7 +53,10 @@ export class AppComponent implements OnInit, OnDestroy {
     Quagga.onDetected((data) => {
       console.log("Codice a barre rilevato:", data.codeResult.code);
       // Puoi gestire il risultato qui
-      this.scannedCodes.push(data.codeResult.code)
+      const lastElement = this.scannedCodes[this.scannedCodes.length - 1];
+      if (lastElement !== data.codeResult.code) {
+        this.scannedCodes.push(data.codeResult.code);
+      }
     });
   }
 
