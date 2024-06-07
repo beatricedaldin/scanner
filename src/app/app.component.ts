@@ -81,10 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
       console.log("Codice a barre rilevato:", data.codeResult.code);
       // Puoi gestire il risultato qui
       const lastElement = this.scannedCodes[this.scannedCodes.length - 1];
-      if (
-        lastElement !== data.codeResult.code &&
-        data.codeResult.format == "ean"
-      ) {
+      if (lastElement !== data.codeResult.code) {
         this.scannedCodes.push(data.codeResult.code);
       }
     });
