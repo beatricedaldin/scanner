@@ -3,3 +3,7 @@
   <p>CODICI SCANNERIZZATI:</p>
   <p *ngFor="let code of scannedCodes">{{ code }}</p>
 </div>
+
+<div *ngIf="resultCollector && resultCollector.length > 0">
+  {{resultCollector}}
+</div>

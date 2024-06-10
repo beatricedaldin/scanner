@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import Quagga from "quagga";
+const Quagga = require("quagga").default;
 
 @Component({
   selector: "app-root",
@@ -64,11 +64,14 @@ export class AppComponent implements OnInit, OnDestroy {
           //     showBB: true,
           //   },
           // },
-          halfSample: true,
-          patchSize: "x-large",
+          // halfSample: true,
+          // patchSize: "x-large",
+          locate: true,
+          frequency: 3,
+          multiple: false,
         },
       },
-      (err) => {
+      (err: any) => {
         if (err) {
           console.log(err);
           return;
@@ -77,12 +80,14 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     );
 
-    Quagga.onDetected((data) => {
+    Quagga.onDetected((data: any) => {
       console.log("Codice a barre rilevato:", data.codeResult.code);
       // Puoi gestire il risultato qui
       const lastElement = this.scannedCodes[this.scannedCodes.length - 1];
       if (lastElement !== data.codeResult.code) {
-        this.scannedCodes.push(data.codeResult.code);
+        this.scannedCodes.push(
+          data.codeResult.code + " " + data.codeResult.format
+        );
       }
     });
   }
@@ -90,4 +95,18 @@ export class AppComponent implements OnInit, OnDestroy {
   stopScanner() {
     Quagga.stop();
   }
+  resultCollector = Quagga.ResultCollector.create({
+    capture: true, // keep track of the image producing this result
+    capacity: 20,  // maximum number of results to store
+    blacklist: [   // list containing codes which should not be recorded
+        {code: "3574660239843", format: "ean_13"}],
+    filter: function(codeResult:any) {
+        // only store results which match this constraint
+        // returns true/false
+        // e.g.: return codeResult.format === "ean_13";
+        console.log(codeResult)
+        return true;
+    }
+});
+
 }
