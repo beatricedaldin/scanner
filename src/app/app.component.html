@@ -8,7 +8,7 @@
   {{resultCollector}}
 </div> -->
 
-<ngx-barcode-scanner [(value)]="value"
+<!-- <ngx-barcode-scanner [(value)]="value"
                      [codes]="['ean_13']" [errorThreshold]="0.1" (exception)="onError($event)"></ngx-barcode-scanner>`
     <div style="display: flex; justify-content: space-between; margin: 5% auto">
         <button (click)="onStartButtonPress()">Start</button>
@@ -19,5 +19,14 @@
     <div>
       <p>CODICI SCANNERIZZATI:</p>
       <p>{{scannedValues}}</p>
-    </div>
+    </div> -->
 
+<barcode-scanner-livestream
+  type="ean_13"
+  (valueChanges)="onValueChanges($event)"
+  (started)="(onStarted)"
+></barcode-scanner-livestream>
+<div [hidden]="!barcodeValue">
+  {{ barcodeValue }}
+</div>
+Ø
