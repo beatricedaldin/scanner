@@ -12,10 +12,10 @@ export class AppComponent implements AfterViewInit {
 
   barcodeValue;
 
-  types = [
-    "ean",
-    "code_128"
-  ]
+  // types = [
+  //   "ean",
+  //   "code_128"
+  // ]
 
   ngAfterViewInit() {
     this.barcodeScanner.start();
