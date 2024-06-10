@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-// @ts-ignore
 import Quagga from 'quagga'; 
 
 @Component({
@@ -39,13 +38,13 @@ export class AppComponent implements OnInit, OnDestroy {
         },
         decoder: {
           readers: [
-            "code_128_reader",
+            // "code_128_reader",
             "ean_reader",
             "ean_8_reader",
-            "code_39_reader",
-            "upc_reader",
-            "upc_e_reader",
-            "code_93_reader",
+            // "code_39_reader",
+            // "upc_reader",
+            // "upc_e_reader",
+            // "code_93_reader",
           ],
           // debug: {
           //   drawBoundingBox: true,
@@ -67,9 +66,6 @@ export class AppComponent implements OnInit, OnDestroy {
           // },
           // halfSample: true,
           // patchSize: "x-large",
-          locate: true,
-          frequency: 3,
-          multiple: false,
         },
       },
       (err: any) => {
@@ -96,18 +92,15 @@ export class AppComponent implements OnInit, OnDestroy {
   stopScanner() {
     Quagga.stop();
   }
-  resultCollector = Quagga.ResultCollector.create({
-    capture: true, // keep track of the image producing this result
-    capacity: 20,  // maximum number of results to store
-    blacklist: [   // list containing codes which should not be recorded
-        {code: "3574660239843", format: "ean_13"}],
-    filter: function(codeResult:any) {
-        // only store results which match this constraint
-        // returns true/false
-        // e.g.: return codeResult.format === "ean_13";
-        console.log(codeResult)
-        return true;
-    }
-});
+//   resultCollector = Quagga.ResultCollector.create({
+//     capture: true, // keep track of the image producing this result
+//     capacity: 20,  // maximum number of results to store
+//     blacklist: [   // list containing codes which should not be recorded
+//         {code: "3574660239843", format: "ean_13"}
+//       ],
+//     filter: function(codeResult:any) {
+//         return codeResult.format === "ean_13"
+//     }
+// });
 
 }
