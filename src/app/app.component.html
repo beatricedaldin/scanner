@@ -1,9 +1,23 @@
-<div id="interactive" class="viewport"></div>
+<!-- <div id="interactive" class="viewport"></div>
 <div *ngIf="scannedCodes && scannedCodes.length > 0">
   <p>CODICI SCANNERIZZATI:</p>
   <p *ngFor="let code of scannedCodes">{{ code }}</p>
-</div>
+</div> -->
 
 <!-- <div *ngIf="resultCollector && resultCollector.length > 0">
   {{resultCollector}}
 </div> -->
+
+<ngx-barcode-scanner [(value)]="value"
+                     [codes]="['ean_13']" [errorThreshold]="0.1" (exception)="onError($event)"></ngx-barcode-scanner>`
+    <div style="display: flex; justify-content: space-between; margin: 5% auto">
+        <button (click)="onStartButtonPress()">Start</button>
+        <button (click)="onStopButtonPress()">Stop</button>
+    </div>
+
+
+    <div>
+      <p>CODICI SCANNERIZZATI:</p>
+      <p>{{scannedValues}}</p>
+    </div>
+
