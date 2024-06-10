@@ -1,62 +1,79 @@
-import { Component, OnInit } from "@angular/core";
-import { NgxBarcodeScannerService } from "@eisberg-labs/ngx-barcode-scanner";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import { BarcodeScannerLivestreamComponent } from "ngx-barcode-scanner";
+
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements OnInit {
-  value: string = "";
-  scannedValues: string[] = [];
-  isError: boolean = false;
-  quaggaConfig = {
-    inputStream: {
-      name: "Live",
-      constraints: {
-        width: 640,
-        height: 480,
-        facingMode: "environment",
-        deviceId: "7832475934759384534",
-      },
-      area: {
-        // defines rectangle of the detection/localization area
-        top: "0%", // top offset
-        right: "0%", // right offset
-        left: "0%", // left offset
-        bottom: "0%", // bottom offset
-      },
-      singleChannel: false,
-    },
-    locate: false,
-    readers: [
-      {
-        format: "ean_reader",
-        config: {
-          supplements: ["ean_13_reader"],
-        },
-      },
-    ],
-  };
-  constructor(private service: NgxBarcodeScannerService) {}
-  ngOnInit(): void {}
+export class AppComponent implements AfterViewInit {
+  @ViewChild(BarcodeScannerLivestreamComponent)
+  barcodeScanner: BarcodeScannerLivestreamComponent;
 
-  onStartButtonPress() {
-    this.service.start(this.quaggaConfig, 0.1);
+  barcodeValue : any;
+
+  ngAfterViewInit() {
+    this.barcodeScanner.start();
   }
 
-  onValueChanges(detectedValue: string) {
-    console.log("Found this: " + detectedValue);
-    this.scannedValues.push(detectedValue);
+  onValueChanges(result:any) {
+    this.barcodeValue = result.codeResult.code;
   }
 
-  onStopButtonPress() {
-    this.service.stop();
+  onStarted(started:any) {
+    console.log(started);
   }
-  onError(error: any) {
-    console.error(error);
-    this.isError = true;
-  }
+  // value: string = "";
+  // scannedValues: string[] = [];
+  // isError: boolean = false;
+  // quaggaConfig = {
+  //   inputStream: {
+  //     name: "Live",
+  //     constraints: {
+  //       width: 640,
+  //       height: 480,
+  //       facingMode: "environment",
+  //       deviceId: "7832475934759384534",
+  //     },
+  //     area: {
+  //       // defines rectangle of the detection/localization area
+  //       top: "0%", // top offset
+  //       right: "0%", // right offset
+  //       left: "0%", // left offset
+  //       bottom: "0%", // bottom offset
+  //     },
+  //     singleChannel: false,
+  //   },
+  //   locate: false,
+  //   readers: [
+  //     {
+  //       format: "ean_reader",
+  //       config: {
+  //         supplements: ["ean_13_reader"],
+  //       },
+  //     },
+  //   ],
+  // };
+  // constructor(private service: NgxBarcodeScannerService) {}
+  // ngOnInit(): void {}
+
+  // onStartButtonPress() {
+  //   this.service.start(this.quaggaConfig, 0.1);
+  // }
+
+  // onValueChanges(detectedValue: string) {
+  //   console.log("Found this: " + detectedValue);
+  //   this.scannedValues.push(detectedValue);
+  // }
+
+  // onStopButtonPress() {
+  //   this.service.stop();
+  // }
+  // onError(error: any) {
+  //   console.error(error);
+  //   this.isError = true;
+  // }
 
   // startScanner() {
   //   Quagga.init(
