@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-const Quagga = require("quagga").default;
+// @ts-ignore
+import Quagga from 'quagga'; 
 
 @Component({
   selector: "app-root",
