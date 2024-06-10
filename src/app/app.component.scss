@@ -1,10 +1,4 @@
-.viewport {
-  position: relative;
-  width: 100%;
-  height: auto;
-}
-
-canvas, video {
-  width: 100%;
-  height: auto;
+.barcode-scanner-container, .barcode-value {
+  display: flex;
+  justify-content: center;
 }
