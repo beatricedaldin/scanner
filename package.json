@@ -18,7 +18,7 @@
     "@angular/platform-browser": "^14.2.13",
     "@angular/platform-browser-dynamic": "^14.2.13",
     "@angular/router": "^14.2.13",
-    "@ericblade/quagga2": "^1.7.7",
+    "@ericblade/quagga2": "1.7.7",
     "bootstrap": "5.0.2",
     "ngx-barcode-scanner": "^14.0.0",
     "quagga": "^0.12.1",
