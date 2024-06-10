@@ -17,7 +17,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   onValueChanges(result) {
-    this.barcodeValue = result.codeResult.code;
+    this.barcodeValue = result.codeResult.code + " - " + result.codeResult.format;
   }
 
   onStarted(started) {
