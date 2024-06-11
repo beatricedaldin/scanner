@@ -1,31 +1,118 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { BarcodeScannerLivestreamComponent } from 'ngx-barcode-scanner';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { BarcodeFormat } from '@zxing/library';
+import { BehaviorSubject } from 'rxjs';
+import { FormatsDialogComponent } from './formats-dialog/formats-dialog.component';
+import { AppInfoDialogComponent } from './app-info-dialog/app-info-dialog.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements AfterViewInit {
-  @ViewChild(BarcodeScannerLivestreamComponent)
-  barcodeScanner: BarcodeScannerLivestreamComponent;
+export class AppComponent {
+  availableDevices: MediaDeviceInfo[];
+  deviceCurrent: MediaDeviceInfo;
+  deviceSelected: string;
+  hasDevices: boolean;
+  hasPermission: boolean;
 
-  barcodeValue;
+  qrResultString: string;
 
-  // types = [
-  //   "ean",
-  //   "code_128"
-  // ]
+  torchEnabled = false;
+  torchAvailable$ = new BehaviorSubject<boolean>(false);
+  tryHarder = false;
+  constructor(private readonly _dialog: MatDialog) { }
+  clearResult(): void {
+    this.qrResultString = null;
+  }
+  // @ViewChild(BarcodeScannerLivestreamComponent)
+  // barcodeScanner: BarcodeScannerLivestreamComponent;
 
-  ngAfterViewInit() {
-    this.barcodeScanner.start();
+  // barcodeValue;
+
+  // // types = [
+  // //   "ean",
+  // //   "code_128"
+  // // ]
+
+  // ngAfterViewInit() {
+  //   this.barcodeScanner.start();
+  // }
+
+  // onValueChanges(result) {
+  //   this.barcodeValue = result.codeResult.code + " - " + result.codeResult.format;
+  // }
+
+  // onStarted(started) {
+  //   console.log(started);
+  // }
+  formatsEnabled: BarcodeFormat[] = [
+    BarcodeFormat.CODE_128,
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.QR_CODE,
+  ];
+  onCamerasFound(devices: MediaDeviceInfo[]): void {
+    this.availableDevices = devices;
+    this.hasDevices = Boolean(devices && devices.length);
   }
 
-  onValueChanges(result) {
-    this.barcodeValue = result.codeResult.code + " - " + result.codeResult.format;
+  onCodeResult(resultString: string) {
+    this.qrResultString = resultString;
   }
 
-  onStarted(started) {
-    console.log(started);
+  onDeviceSelectChange(selected: string) {
+    const selectedStr = selected || '';
+    if (this.deviceSelected === selectedStr) { return; }
+    this.deviceSelected = selectedStr;
+    const device = this.availableDevices.find(x => x.deviceId === selected);
+    this.deviceCurrent = device || undefined;
+  }
+
+  onDeviceChange(device: MediaDeviceInfo) {
+    const selectedStr = device?.deviceId || '';
+    if (this.deviceSelected === selectedStr) { return; }
+    this.deviceSelected = selectedStr;
+    this.deviceCurrent = device || undefined;
+  }
+
+  openFormatsDialog() {
+    const data = {
+      formatsEnabled: this.formatsEnabled,
+    };
+
+    this._dialog
+      .open(FormatsDialogComponent, { data })
+      .afterClosed()
+      .subscribe(x => {
+        if (x) {
+          this.formatsEnabled = x;
+        }
+      });
+  }
+
+  onHasPermission(has: boolean) {
+    this.hasPermission = has;
+  }
+
+  openInfoDialog() {
+    const data = {
+      hasDevices: this.hasDevices,
+      hasPermission: this.hasPermission,
+    };
+
+    this._dialog.open(AppInfoDialogComponent, { data });
+  }
+
+  onTorchCompatible(isCompatible: boolean): void {
+    this.torchAvailable$.next(isCompatible || false);
+  }
+
+  toggleTorch(): void {
+    this.torchEnabled = !this.torchEnabled;
+  }
+
+  toggleTryHarder(): void {
+    this.tryHarder = !this.tryHarder;
   }
 }
