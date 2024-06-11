@@ -18,7 +18,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {ZXingScannerModule} from '@zxing/ngx-scanner/lib/zxing-scanner.module'
+import {ZXingScannerModule} from '@zxing/ngx-scanner'
 
 
 @NgModule({
